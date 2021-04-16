@@ -44,7 +44,7 @@ for i in range(n):
         classes[i] = 1
     else:
         nums[i] = [(random.uniform(0.0, 0.3)), (random.uniform(0.0, 0.3))]
-        classes[i] = -1
+        classes[i] = 0
 
 
 data = {'X': nums[:, 0],
