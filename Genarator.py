@@ -23,9 +23,9 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y'])
-df.to_csv('./data_package_1.csv', index=False)
+df.to_csv('./data_package_a.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_1.csv', index=False)
+df2.to_csv('./data_package_values_a.csv', index=False)
 
 
 # init i.b data
@@ -53,9 +53,9 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y'])
-df.to_csv('./data_package_2.csv', index=False)
+df.to_csv('./data_package_b.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_2.csv', index=False)
+df2.to_csv('./data_package_values_b.csv', index=False)
 
 # init i.c data
 
@@ -80,7 +80,7 @@ for i in range(n):
         classes[i] = 1
     else:
         nums[i] = [(random.uniform(0.4, 0.6)), (random.uniform(0.4, 0.6))]
-        classes[i] = -1
+        classes[i] = 0
 
 data = {'X': nums[:, 0],
         'Y': nums[:, 1]}
@@ -88,9 +88,9 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y'])
-df.to_csv('./data_package_3.csv', index=False)
+df.to_csv('./data_package_c.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_3.csv', index=False)
+df2.to_csv('./data_package_values_c.csv', index=False)
 
 # init i.d data
 
@@ -105,10 +105,10 @@ for i in range(n):
         classes[i] = 1
     elif (key == 1):
         nums[i] = [(random.uniform(0.7, 0.9)), (random.uniform(0.0, 0.3))]
-        classes[i] = -1
+        classes[i] = 0
     elif (key == 2):
         nums[i] = [(random.uniform(0.0, 0.3)), (random.uniform(0.7, 0.9))]
-        classes[i] = -1
+        classes[i] = 0
     else:
         nums[i] = [(random.uniform(0.7, 0.9)), (random.uniform(0.7, 0.9))]
         classes[i] = 1
@@ -119,9 +119,9 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y'])
-df.to_csv('./data_package_4.csv', index=False)
+df.to_csv('./data_package_d.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_4.csv', index=False)
+df2.to_csv('./data_package_values_d.csv', index=False)
 
 
 # init ii.a data
@@ -148,9 +148,9 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y', 'Z'])
-df.to_csv('./data_package_2_1.csv', index=False)
+df.to_csv('./data_package_ii_a.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_2_1.csv', index=False)
+df2.to_csv('./data_package_values_ii_a.csv', index=False)
 
 # init i.b data
 
@@ -185,6 +185,6 @@ data = {'X': nums[:, 0],
 data_values = {'values': classes}
 
 df = pd.DataFrame(data, columns=['X', 'Y', 'Z'])
-df.to_csv('./data_package_2_2.csv', index=False)
+df.to_csv('./data_package_ii_b.csv', index=False)
 df2 = pd.DataFrame(data_values, columns=['values'])
-df2.to_csv('./data_package_values_2_2.csv', index=False)
+df2.to_csv('./data_package_values_ii_b.csv', index=False)
