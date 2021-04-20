@@ -1,0 +1,4 @@
+*.pyc
+*.csv
+!iris.csv
+!iris_values.csv

@@ -13,11 +13,11 @@ def accuracy(y_true, y_pred):
     return accuracy
 
 # import and ready input file
-input_file = "data_package_b.csv"
+input_file = "data_package_ii_b.csv"
 df = pd.read_csv(input_file, header = 0)
 df = df._get_numeric_data()
 # targets
-targets_file = "data_package_values_b.csv"
+targets_file = "data_package_values_ii_b.csv"
 targets_df = pd.read_csv(targets_file, header = 0)
 targets_df = targets_df._get_numeric_data()
 
