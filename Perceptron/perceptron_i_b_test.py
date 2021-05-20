@@ -8,17 +8,18 @@ from perceptron import Perceptron
 
 # calculate accuracy
 def accuracy(y_true, y_pred):
-    y_true = np.reshape(y_true,np.shape(y_pred))
+    y_true = np.reshape(y_true, np.shape(y_pred))
     accuracy = np.sum(y_true == y_pred) / len(y_true)
     return accuracy
 
+
 # import and ready input file
 input_file = "data_package_b.csv"
-df = pd.read_csv(input_file, header = 0)
+df = pd.read_csv(input_file, header=0)
 df = df._get_numeric_data()
 # targets
 targets_file = "data_package_values_b.csv"
-targets_df = pd.read_csv(targets_file, header = 0)
+targets_df = pd.read_csv(targets_file, header=0)
 targets_df = targets_df._get_numeric_data()
 
 
@@ -27,7 +28,8 @@ X = df.values
 y = targets_df.values
 
 # split data into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=123)
 # print(X_train) # x,y values for training
 # print(X_test)  # x,y values for testing
 # print(y_train) # 0,1 targets for training
@@ -39,14 +41,17 @@ p.fit(X_train, y_train)
 predictions = p.predict(X_test)
 
 # predictions: exodos, y_test: stoxos
-print("Perceptron classification accuracy", accuracy(y_test, predictions)*100, "%")
+print("Perceptron classification accuracy",
+      accuracy(y_test, predictions)*100, "%")
 
 # plot
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
-plt.scatter(range(len(y_test)), y_test, marker='o', color='b') # mple teleies: pragmatikoi stoxoi (y_test)
-plt.scatter(range(len(predictions)), predictions, marker='.', color='r') # kokkinoi kykloi: exwdos (predictions)
+# mple teleies: pragmatikoi stoxoi (y_test)
+plt.scatter(range(len(y_test)), y_test, marker='o', color='b')
+plt.scatter(range(len(predictions)), predictions, marker='.',
+            color='r')  # kokkinoi kykloi: exwdos (predictions)
 plt.xlabel("protypo")
 plt.ylabel("exodos (r) / stoxos (b)")
 
