@@ -1,3 +1,7 @@
 *.pyc
 *.csv
 !iris.csv
+!5_*.csv
+!6_*.csv
+!8_*.csv
+!9_*.csv
