@@ -22,10 +22,11 @@ class Perceptron:
         # y must be only 0 or 1
         y_ = np.array([1 if i > 0 else 0 for i in y])
         # epochs
-        fig, axes = plt.subplots(1,3)
+        if plot:
+            fig, axes = plt.subplots(1,3)
+            
         for epoch in range(self.n_iters):
             y_pred = np.zeros(y.shape)
-
     
             # for each Xi
             for index, xi in enumerate(X):
@@ -46,11 +47,12 @@ class Perceptron:
         y_predicted = self.activation_func(linear_output)
         return y_predicted
 
-# activation function
+    # activation function
     def activation_function(self, x):
         return np.where(x >= 0, 1, 0)
 
     def live_plot(self,axes,X,y,w,b,y_pred,epoch):
+        axes[1].clear() # clear the line
         axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
         axes[1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
         axes[2].scatter(range(len(y_pred)), y_pred,marker='x', c=y_pred)
@@ -65,9 +67,10 @@ class Perceptron:
         ymin = np.amin(X[:, 1])
         ymax = np.amax(X[:, 1])
         axes[1].set_ylim([ymin-1, ymax+1])
+        axes[0].set_ylim([ymin-1, ymax+1])
 
         axes[0].set_xlabel("protypo")
         axes[0].set_ylabel("exodos ")
         axes[1].set_xlabel("protypo")
         axes[1].set_ylabel("exodos ")
-        plt.pause(0.05)
+        plt.pause(0.0001)
