@@ -27,12 +27,9 @@ targets_df = targets_df._get_numeric_data()
 X = df.values
 y = targets_df.values
 # display data
-for index in range(len(y)):
-    plt.scatter(index, 'class 1' if y[index] ==
-                1 else 'class 0', marker='o', color='blue', label='correct')
-
-# split data into train and test sets
-# plt.scatter(range(len(y)), y, marker='o', color='b')
+# for index in range(len(y)):
+#     plt.scatter(index, 'class 1' if y[index] ==
+#                 1 else 'class 0', marker='o', color='blue', label='correct')
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=123)
@@ -42,8 +39,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 # print(y_test)  # 0,1 targets for testing
 
 # create and train model
-p = Perceptron(learning_rate=0.01, n_iters=1000)
-p.fit(X_train, y_train)
+p = Perceptron(learning_rate=0.01, n_iters=10)
+p.fit(X_train, y_train, True)
 predictions = p.predict(X_test)
 
 # predictions: exodos, y_test: stoxos
@@ -60,13 +57,5 @@ plt.scatter(range(len(predictions)), predictions, marker='.',
             color='r')  # kokkinoi kykloi: exwdos (predictions)
 plt.xlabel("protypo")
 plt.ylabel("exodos (r) / stoxos (b)")
-
-# TODO diaxoristiki grammi?
-
-# x0_1 = np.amin(X_test[:, 0])
-# x0_2 = np.amax(X_test[:, 0])
-# x1_1 = (-p.weights[0] * x0_1 - p.bias) / p.weights[1]
-# x1_2 = (-p.weights[0] * x0_2 - p.bias) / p.weights[1]
-# ax.plot([x0_1, x0_2], [x1_1, x1_2], 'k')
 
 plt.show()
