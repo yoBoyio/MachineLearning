@@ -3,21 +3,17 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import pandas as pd
 from perceptron import Perceptron
-from plot import plot_data, plot_testing_data
-
 
 def accuracy(y_true, y_pred):
     y_true = np.reshape(y_true, np.shape(y_pred))
     accuracy = np.sum(y_true == y_pred) / len(y_true)
     return accuracy
 
-
 # import and ready input file
 input_file = "iris.csv"
 df = pd.read_csv(input_file, header=None)
 df.head()
-# display raw data
-plot_data(df.values)
+
 # X: values, y: targets
 # extract features
 X = df.iloc[:, 0:3].values
@@ -38,17 +34,12 @@ predictions = []
 y_test = []
 i = 0
 
-X_train, X_test, y_train, y_test_tmp = train_test_split(
-    X, y, test_size=0.2, random_state=123)
-# display test data
-plot_testing_data(X_train, X_test)
-
 for set in sets:
 
     # split data into train and test sets
     X_train, X_test, y_train, y_test_tmp = train_test_split(
         X, set, test_size=0.2, random_state=123)
-
+    
     y_test.append(y_test_tmp)
     # print(X_train) # x,y values for training
     # print(X_test)  # x,y values for testing
@@ -56,25 +47,13 @@ for set in sets:
     # print(y_test[i])  # 0,1 targets for testing
 
     # create and train model
-    p = Perceptron(learning_rate=0.01, n_iters=2000)
-    p.fit(X_train, y_train)
+    p = Perceptron(learning_rate=0.01, n_iters=300)
+    p.fit(X_train, y_train, plot=True)
     predictions.append(p.predict(X_test))
 
     # predictions: exodos, y_test: stoxos
     print("Perceptron classification accuracy",
           accuracy(y_test[i], predictions[i])*100, "%")
     i += 1
-
-# plot
-
-fig, (ax) = plt.subplots(1, 3, sharex=True, sharey=True)
-for i in range(3):
-    # mple teleies: pragmatikoi stoxoi (y_test)
-    ax[i].scatter(range(len(y_test[i])), y_test[i], marker='o', color='b')
-    # kokkinoi kykloi: exwdos (predictions)
-    ax[i].scatter(range(len(predictions[i])),
-                  predictions[i], marker='.', color='r')
-    ax[i].set_xlabel("protypo")
-    ax[i].set_ylabel("exodos (r) / stoxos (b)")
 
 plt.show()
