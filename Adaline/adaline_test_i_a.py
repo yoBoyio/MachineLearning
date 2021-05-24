@@ -24,7 +24,7 @@ def adaline_test_i_b():
         values, targets, test_size=0.2, random_state=123)
     # plot_testing_data(targets_train, targets_test)
     adaline_implementation(targets_train, targets_test,
-                           patterns_train, patterns_test,False)
+                           patterns_train, patterns_test,True)
 
 
 if __name__ == '__main__':

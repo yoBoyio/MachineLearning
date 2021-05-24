@@ -18,8 +18,8 @@ class Adaline:
         return targets_train, targets_test
 
     def sign_function(self, weighted_sum):
-        if weighted_sum < 0:
-            return -1
+        if weighted_sum < 0.5:
+            return 0
         else:
             return 1
 
@@ -35,19 +35,32 @@ class Adaline:
     def guess(self, weights, pattern):
         return self.sign_function(self.output(weights, pattern))
 
-    def train(self, max_epochs, patterns, targets, learning_rate, min_mse):
+    def train(self, max_epochs, patterns, targets, learning_rate, min_mse,plot = False):
         epoch = 0
         mse = 100
-        weights = np.zeros(len(patterns[0]))
+        if plot:
+            fig, axes = plt.subplots(1,4)
+
+        weights = np.zeros(2)
+        mse_ar = np.zeros(max_epochs)
         while epoch < max_epochs and mse > min_mse:
-            mse = 0
+
+            y_pred = np.zeros(targets.shape)
+
             for i, pattern in enumerate(patterns):
                 current_output = self.output(weights, pattern)
+                y_pred[i] = current_output
                 weights = self.adjust_weights(
                     weights, targets[i], pattern, learning_rate, current_output)
                 mse += pow((targets[i] - current_output), 2)
+
             mse = mse / 2.0
+            mse_ar[epoch] = mse
+            if plot:
+                self.live_plot(axes,patterns,targets,y_pred,mse_ar,fig,epoch)
             epoch += 1
+            
+            # plt.show()
         return weights
 
     def test(self, weights, patterns_test, targets_test):
@@ -59,14 +72,21 @@ class Adaline:
     def plot_accuracy(self, targets, guesses):
         fig = plt.figure(2)
         fig.suptitle('Επιτυχείς/Ανεπιτυχείς κατανομές')
-        for index in range(len(guesses)):
-            plt.scatter(index, 'Chosen class' if targets[index] ==
-                        1 else 'Other class', marker='o', color='blue', label='correct')
-            plt.scatter(index, 'Chosen class' if guesses[index] ==
-                        1 else 'Other class', marker='.', color='red', label='guesses')
+        # for index in range(len(guesses)):
+        #     plt.scatter(index, 'Chosen class' if targets[index] ==
+        #                 1 else 'Other class', marker='o', color='blue', label='target')
+        #     plt.scatter(index, 'Chosen class' if guesses[index] ==
+        #                 1 else 'Other class', marker='.', color='red', label='guesses')
+        # plt.xlabel("protypo")
+        # plt.ylabel("exodos (r) / stoxos (b)")
+        # plt.show()
+        ax = fig.add_subplot(1, 1, 1)
+        plt.scatter(range(len(targets)), targets, marker='o', color='b') # mple teleies: pragmatikoi stoxoi (y_test)
+        plt.scatter(range(len(guesses)), guesses, marker='.', color='r') # kokkinoi kykloi: exwdos (predictions)
         plt.xlabel("protypo")
         plt.ylabel("exodos (r) / stoxos (b)")
         plt.show()
+
 
     def cross_validation_test(self, patterns, targets, max_epochs, learning_rate, min_mse):
         fold_guesses = []
@@ -97,9 +117,9 @@ class Adaline:
                 accuracy = self.get_accuracy(fold_guesses[i], fold_targets[i])
                 axs[0, i].set_title(f"Accuracy: {accuracy}%")
                 axs[0, i].scatter(j, np.array(fold_guesses)[
-                                  i][j], c='tab:blue', marker='o', label='guesses')
+                                  i][j], c='tab:blue', marker='o', label='targets')
                 axs[0, i].scatter(j, np.array(fold_targets)[
-                                  i][j], c='tab:red', marker='.', label='correct')
+                                  i][j], c='tab:red', marker='.', label='guesses')
         for i in range(3):
             for j in range(len(fold_guesses[i])):
                 accuracy = self.get_accuracy(fold_guesses[i], fold_targets[i])
@@ -116,8 +136,28 @@ class Adaline:
                                   i+6][j], c='tab:blue', marker='o')
                 axs[2, i].scatter(j, np.array(fold_targets)[
                                   i+6][j], c='tab:red', marker='.')
-        plt.legend(['Guesses', 'Correct'], bbox_to_anchor=(
+        plt.legend(['Guesses', 'Target'], bbox_to_anchor=(
             1, 1), bbox_transform=plt.gcf().transFigure)
         fig.suptitle(
             'Επιτυχείς/ανεπιτυχείς κατανομές (9-fold cross-validation)')
-        plt.show()
+        # plt.show()
+
+
+    def live_plot(self,axes,X,y,y_pred,mse, fig,epoch):
+            fig.suptitle('Epoch %d' % epoch)
+            axes[0].clear() # clear the line
+            axes[1].clear() # clear the line
+            axes[2].clear() # clear the line
+            axes[3].clear() # clear the line
+            axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
+            axes[1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
+            axes[2].scatter(range(len(y_pred)), y_pred,marker='x', c=y_pred)
+            axes[2].set_xlabel('x')
+            axes[3].plot(range(len(mse)), mse, 'b')
+            axes[3].set_xlabel('mse')
+            
+
+            axes[0].set_xlabel("x")
+            axes[0].set_ylabel("y ")
+            axes[1].set_xlabel("x")
+            plt.pause(0.0001)
