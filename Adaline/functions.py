@@ -20,7 +20,7 @@ def plot_data(targets):
 
 
 def add_biases(patterns):
-    biases = np.ones((200, 0))
+    biases = np.ones((150, 0))
     return np.hstack((biases, patterns))
 
 
@@ -34,7 +34,17 @@ def plot_testing_data(patterns_train, patterns_test,):
     plt.show()
 
 
-def adaline_implementation(targets_train, targets_test, patterns_train, patterns_test,plot):
+def plot_testing_data_iris(patterns_train, patterns_test,):
+    plt.scatter(np.array(patterns_train)[:, 1], np.array(
+        patterns_train)[:, 3], c='tab:blue', label='training data')
+    plt.scatter(np.array(patterns_test)[:, 1], np.array(
+        patterns_test)[:, 3], c='tab:red', label='testing data')
+    plt.legend()
+    plt.title('Κατανομή δεδομένων εκπαίδευσης/ελέγχου')
+    plt.show()
+
+
+def adaline_implementation(targets_train, targets_test, patterns_train, patterns_test, plot):
     a = Adaline()
     atargets_train, atargets_test = a.transmute_targets(
         targets_train, targets_test)
@@ -42,9 +52,9 @@ def adaline_implementation(targets_train, targets_test, patterns_train, patterns
     learning_rate = float(input('Ρυθμός εκμάθησης: '))
     min_mse = float(input('Ελάχιστο σφάλμα: '))
     weights = a.train(max_epochs, patterns_train,
-                      atargets_train, learning_rate, min_mse,plot)
+                      atargets_train, learning_rate, min_mse, plot)
     if plot == False:
         guesses = a.test(weights, patterns_test, atargets_test)
         a.plot_accuracy(atargets_test, guesses)
     # a.cross_validation_test(patterns_train, atargets_train,
-                            # max_epochs, learning_rate, min_mse)
+        # max_epochs, learning_rate, min_mse)

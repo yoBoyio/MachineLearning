@@ -18,7 +18,7 @@ class Adaline:
         return targets_train, targets_test
 
     def sign_function(self, weighted_sum):
-        if weighted_sum < 0.5:
+        if weighted_sum < 0:
             return 0
         else:
             return 1
@@ -35,16 +35,16 @@ class Adaline:
     def guess(self, weights, pattern):
         return self.sign_function(self.output(weights, pattern))
 
-    def train(self, max_epochs, patterns, targets, learning_rate, min_mse,plot = False):
+    def train(self, max_epochs, patterns, targets, learning_rate, min_mse, plot=False):
         epoch = 0
         mse = 100
         if plot:
-            fig, axes = plt.subplots(1,4)
+            fig, axes = plt.subplots(1, 4)
 
-        weights = np.zeros(2)
+        weights = np.zeros(patterns.shape[1])
         mse_ar = np.zeros(max_epochs)
         while epoch < max_epochs and mse > min_mse:
-
+            mse = 0
             y_pred = np.zeros(targets.shape)
 
             for i, pattern in enumerate(patterns):
@@ -52,14 +52,17 @@ class Adaline:
                 y_pred[i] = current_output
                 weights = self.adjust_weights(
                     weights, targets[i], pattern, learning_rate, current_output)
+                print(current_output)
+                print(targets[i])
                 mse += pow((targets[i] - current_output), 2)
 
             mse = mse / 2.0
             mse_ar[epoch] = mse
             if plot:
-                self.live_plot(axes,patterns,targets,y_pred,mse_ar,fig,epoch)
+                self.live_plot(axes, patterns, targets,
+                               y_pred, mse_ar, fig, epoch)
             epoch += 1
-            
+
             # plt.show()
         return weights
 
@@ -81,12 +84,13 @@ class Adaline:
         # plt.ylabel("exodos (r) / stoxos (b)")
         # plt.show()
         ax = fig.add_subplot(1, 1, 1)
-        plt.scatter(range(len(targets)), targets, marker='o', color='b') # mple teleies: pragmatikoi stoxoi (y_test)
-        plt.scatter(range(len(guesses)), guesses, marker='.', color='r') # kokkinoi kykloi: exwdos (predictions)
+        # mple teleies: pragmatikoi stoxoi (y_test)
+        plt.scatter(range(len(targets)), targets, marker='o', color='b')
+        # kokkinoi kykloi: exwdos (predictions)
+        plt.scatter(range(len(guesses)), guesses, marker='.', color='r')
         plt.xlabel("protypo")
         plt.ylabel("exodos (r) / stoxos (b)")
         plt.show()
-
 
     def cross_validation_test(self, patterns, targets, max_epochs, learning_rate, min_mse):
         fold_guesses = []
@@ -142,22 +146,20 @@ class Adaline:
             'Επιτυχείς/ανεπιτυχείς κατανομές (9-fold cross-validation)')
         # plt.show()
 
+    def live_plot(self, axes, X, y, y_pred, mse, fig, epoch):
+        fig.suptitle('Epoch %d' % epoch)
+        axes[0].clear()  # clear the line
+        axes[1].clear()  # clear the line
+        axes[2].clear()  # clear the line
+        axes[3].clear()  # clear the line
+        axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
+        axes[1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
+        axes[2].scatter(range(len(y_pred)), y_pred, marker='x', c=y_pred)
+        axes[2].set_xlabel('x')
+        axes[3].plot(range(len(mse)), mse, 'b')
+        axes[3].set_xlabel('mse')
 
-    def live_plot(self,axes,X,y,y_pred,mse, fig,epoch):
-            fig.suptitle('Epoch %d' % epoch)
-            axes[0].clear() # clear the line
-            axes[1].clear() # clear the line
-            axes[2].clear() # clear the line
-            axes[3].clear() # clear the line
-            axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
-            axes[1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
-            axes[2].scatter(range(len(y_pred)), y_pred,marker='x', c=y_pred)
-            axes[2].set_xlabel('x')
-            axes[3].plot(range(len(mse)), mse, 'b')
-            axes[3].set_xlabel('mse')
-            
-
-            axes[0].set_xlabel("x")
-            axes[0].set_ylabel("y ")
-            axes[1].set_xlabel("x")
-            plt.pause(0.0001)
+        axes[0].set_xlabel("x")
+        axes[0].set_ylabel("y ")
+        axes[1].set_xlabel("x")
+        plt.pause(0.0001)
