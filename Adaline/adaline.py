@@ -7,19 +7,21 @@ class Adaline:
     def transmute_targets(self, targets_train, targets_test):
         index = 0
         for target in enumerate(targets_train):
-            if target == 0:
+            if target[1] == 0:
+                # print(target[1])
                 targets_train[index] = -1
             index += 1
         index = 0
         for target in enumerate(targets_test):
-            if target == 0:
+            if target[1] == 0:
+                print(target[1])
                 targets_test[index] = -1
             index += 1
         return targets_train, targets_test
 
     def sign_function(self, weighted_sum):
         if weighted_sum < 0:
-            return 0
+            return -1
         else:
             return 1
 
@@ -35,7 +37,8 @@ class Adaline:
     def guess(self, weights, pattern):
         return self.sign_function(self.output(weights, pattern))
 
-    def train(self, max_epochs, patterns, targets, learning_rate, min_mse, plot=False):
+    def train(self, max_epochs, patterns, targets, learning_rate,
+              min_mse, plot=False, d3=False):
         epoch = 0
         mse = 100
         if plot:
@@ -44,23 +47,24 @@ class Adaline:
         weights = np.zeros(patterns.shape[1])
         mse_ar = np.zeros(max_epochs)
         while epoch < max_epochs and mse > min_mse:
-            mse = 0
+            # mse = 0
             y_pred = np.zeros(targets.shape)
 
             for i, pattern in enumerate(patterns):
                 current_output = self.output(weights, pattern)
+                # print(current_output)
+                # print(targets[i])
                 y_pred[i] = current_output
                 weights = self.adjust_weights(
                     weights, targets[i], pattern, learning_rate, current_output)
-                print(current_output)
-                print(targets[i])
-                mse += pow((targets[i] - current_output), 2)
 
+                mse += pow((targets[i] - current_output), 2)
             mse = mse / 2.0
             mse_ar[epoch] = mse
             if plot:
-                self.live_plot(axes, patterns, targets,
-                               y_pred, mse_ar, fig, epoch)
+                if(epoch % 10 == 0):
+                    self.live_plot(axes, patterns, targets,
+                                   y_pred, mse_ar, fig, epoch, d3)
             epoch += 1
 
             # plt.show()
@@ -75,14 +79,7 @@ class Adaline:
     def plot_accuracy(self, targets, guesses):
         fig = plt.figure(2)
         fig.suptitle('Επιτυχείς/Ανεπιτυχείς κατανομές')
-        # for index in range(len(guesses)):
-        #     plt.scatter(index, 'Chosen class' if targets[index] ==
-        #                 1 else 'Other class', marker='o', color='blue', label='target')
-        #     plt.scatter(index, 'Chosen class' if guesses[index] ==
-        #                 1 else 'Other class', marker='.', color='red', label='guesses')
-        # plt.xlabel("protypo")
-        # plt.ylabel("exodos (r) / stoxos (b)")
-        # plt.show()
+
         ax = fig.add_subplot(1, 1, 1)
         # mple teleies: pragmatikoi stoxoi (y_test)
         plt.scatter(range(len(targets)), targets, marker='o', color='b')
@@ -90,7 +87,11 @@ class Adaline:
         plt.scatter(range(len(guesses)), guesses, marker='.', color='r')
         plt.xlabel("protypo")
         plt.ylabel("exodos (r) / stoxos (b)")
+        y_true = np.reshape(targets, np.shape(guesses))
+        accuracy = np.sum(y_true == guesses) / len(y_true)
         plt.show()
+        print("Perceptron classification accuracy",
+              accuracy*100, "%")
 
     def cross_validation_test(self, patterns, targets, max_epochs, learning_rate, min_mse):
         fold_guesses = []
@@ -146,7 +147,7 @@ class Adaline:
             'Επιτυχείς/ανεπιτυχείς κατανομές (9-fold cross-validation)')
         # plt.show()
 
-    def live_plot(self, axes, X, y, y_pred, mse, fig, epoch):
+    def live_plot(self, axes, X, y, y_pred, mse, fig, epoch, d3):
         fig.suptitle('Epoch %d' % epoch)
         axes[0].clear()  # clear the line
         axes[1].clear()  # clear the line
@@ -154,6 +155,10 @@ class Adaline:
         axes[3].clear()  # clear the line
         axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
         axes[1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
+        if (d3):
+            axes[0].scatter(X[:, 0], X[:, 2], marker='o', c=y)
+            axes[1].scatter(X[:, 0], X[:, 2], marker='x', c=y_pred)
+
         axes[2].scatter(range(len(y_pred)), y_pred, marker='x', c=y_pred)
         axes[2].set_xlabel('x')
         axes[3].plot(range(len(mse)), mse, 'b')
@@ -162,4 +167,4 @@ class Adaline:
         axes[0].set_xlabel("x")
         axes[0].set_ylabel("y ")
         axes[1].set_xlabel("x")
-        plt.pause(0.0001)
+        plt.pause(0.001)
