@@ -6,10 +6,13 @@ import pandas as pd
 from perceptron import Perceptron
 
 # calculate accuracy
+
+
 def accuracy(y_true, y_pred):
     y_true = np.reshape(y_true, np.shape(y_pred))
     accuracy = np.sum(y_true == y_pred) / len(y_true)
     return accuracy
+
 
 # import and ready input file
 input_file = "data_package_ii_a.csv"
@@ -29,8 +32,9 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=123)
 
 # create and train model
-p = Perceptron(learning_rate=0.01, n_iters=100)
+p = Perceptron(learning_rate=0.01, n_iters=1000)
 p.fit(X_train, y_train, True)
 predictions = p.predict(X_test)
 
-print("Perceptron classification accuracy", accuracy(y_test, predictions)*100, "%")
+print("Perceptron classification accuracy",
+      accuracy(y_test, predictions)*100, "%")

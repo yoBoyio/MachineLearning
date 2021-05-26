@@ -47,11 +47,12 @@ def adaline_test_i_b():
 
         y_test.append(y_test_tmp)
 
-        # plot testing data
-        # plot_testing_data(X_train, X_test)
-
+        # live plot
+        plot = True
+        # 3d plot
+        d3 = True
         adaline_implementation(y_train, y_test_tmp,
-                               X_train, X_test, True)
+                               X_train, X_test, plot, d3)
 
 
 if __name__ == '__main__':
