@@ -1,3 +1,4 @@
+from math import e
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -39,7 +40,7 @@ def create_MLP():
 
     return clf
 
-def live_plot(ax, X, y, y_pred, clf, mse_ar, epoch):
+def live_plot(ax, X, y, y_pred, clf, mse_ar, isIris=False):
     # clear graphs
     ax[0][0].clear()
     ax[0][1].clear()
@@ -48,7 +49,16 @@ def live_plot(ax, X, y, y_pred, clf, mse_ar, epoch):
     # graph 1
     ax[0][0].scatter(X[:, 0], X[:, 1], marker='x', c=y)
     # graph 2
-    plot_decision_regions(X=X, y=y_pred.flatten().astype(np.integer), clf=clf, legend=2,ax=ax[0][1])
+    if (isIris):
+        value = 1.5
+        width = 0.75
+        plot_decision_regions(X, y=y_pred.flatten().astype(np.integer), clf=clf,
+            filler_feature_values={2: value},
+            filler_feature_ranges={2: width},
+            legend=2, ax=ax[0][1])
+    else:
+        plot_decision_regions(X, y=y_pred.flatten().astype(np.integer), clf=clf, legend=2, ax=ax[0][1])
+
     # graph 3
     for i in range(len(X)):
         if(y_pred[i]== 1):
@@ -59,6 +69,42 @@ def live_plot(ax, X, y, y_pred, clf, mse_ar, epoch):
     ax[1][1].plot(range(len(mse_ar)), mse_ar, 'b')
 
     plt.pause(0.0001)
+
+def live_plot_3d(ax, X, y, y_pred, clf):
+        ax[0].clear()
+        ax[1].clear()
+        ax[2].clear()
+
+        ax[0].scatter(X[:, 0], X[:, 1],X[:, 2], marker='x', c=y)        
+        ax[1].scatter(X[:, 0], X[:, 1],X[:, 2], marker='x', c=y_pred)
+        ax[2].scatter(range(len(y_pred)), y_pred,marker='x', c=y)
+
+        epoch = clf.n_iter_-1
+        w = clf.coefs_[0]
+        w1 = w[0]
+        w2 = w[1]
+        w3 = w[2]
+        b = clf.intercepts_[0]
+
+
+        z = lambda x,y: (-b-w1*x-w2*y) / w3
+
+        x_min = np.amin(X[:, 0])
+        x_max = np.amax(X[:, 0])
+        ax[1].set_xlim([x_min-0.2, x_max+0.2])
+        x = np.linspace(x_min, x_max, 100)
+        y_min = np.amin(X[:, 1])
+        y_max = np.amax(X[:, 1])
+        ax[1].set_ylim([y_min-0.2, y_max+0.2])
+        z_min = np.amin(X[:, 2])
+        z_max = np.amax(X[:, 2])
+        y = np.linspace(y_min, y_max, 100)
+        ax[1].set_zlim([z_min+0.2, z_max+0.2])
+
+        x,y = np.meshgrid(x,y)
+        ax[1].plot_surface(x, y, z(x,y), alpha=0.3)
+
+        plt.pause(0.0001)
 
 def plot_results(clf, X_test, y_test):
     predictions = clf.predict(X_test)
@@ -73,14 +119,26 @@ def plot_results(clf, X_test, y_test):
     ax.legend()
     plt.show()
 
-def fit(clf,X_train, y_train, plot=False):
+def plot_results_3d(clf, X_test, y_test):
+   plot_results(clf, X_test, y_test)
+
+def fit(clf,X_train, y_train, plot=False, plot_3d=False, isIris=True):
     if(plot):
         fig, axes = plt.subplots(2,2)
+    if(plot_3d):
+        fig_3d = plt.figure(figsize=(12,4))
+        gs = fig_3d.add_gridspec(1, 3)
+        ax_3d_0 = fig_3d.add_subplot(gs[0,0], projection='3d')
+        ax_3d_1= fig_3d.add_subplot(gs[0,1], projection='3d')
+        ax_3d_2= fig_3d.add_subplot(gs[0,2])
+        ax3d=[ax_3d_0,ax_3d_1,ax_3d_2]
     mse_ar = np.zeros(max_iter)
     if (clf.solver =='sgd'): # partial_fit doesn't support sgd solver
         clf.fit(X_train,y_train)
         if(plot):
-            live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar,max_iter)
+            live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris)
+        if(plot_3d):
+            live_plot_3d(ax3d, X_train, y_train, clf.predict(X_train), clf)
     else:
         for epoch in range(0,max_iter):
             clf.partial_fit(X_train, y_train.flatten(), classes=(np.unique(y_train)))
@@ -90,34 +148,77 @@ def fit(clf,X_train, y_train, plot=False):
             if(epoch%update_every==0): #update every X epochs
                 print("Epoch %d" %epoch, "Accuracy %f" %clf.score(X_train, y_train))
                 if(plot):
-                    live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar,epoch)
+                    live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris)
                     fig.suptitle('Epoch %d' % epoch)
+                if(plot_3d):
+                    live_plot_3d(ax3d, X_train, y_train, clf.predict(X_train), clf)
 
-
-while(True):
-    plotting = int(input("0. Live Plot\n1. Plot Results\n2. Both\n") or 2) 
-    file = input("Δώσε input file(a,b,c,d): ") or 'a'
-    input_file = 'data_package_%s.csv' %file
-    df = pd.read_csv(input_file, header=0)
-    df = df._get_numeric_data()
-    # targets
-    targets_file = 'data_package_values_%s.csv' %file
-    targets_df = pd.read_csv(targets_file, header=0)
-    targets_df = targets_df._get_numeric_data()
+def iris(plotting_results, live_plotting):
+    # import and ready input file
+    input_file = "iris.csv"
+    df = pd.read_csv(input_file, header=None)
+    df.head()
 
     # X: values, y: targets
-    X = df.values
-    y = targets_df.values
+    # extract features
+    X = df.iloc[:, 0:3].values
+    # extract the label column
+    y = df.iloc[:, 4].values
 
-    # split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    y_setosa = np.where(y == 'Setosa', 1, 0)
+    y_versicolor = np.where(y == 'Versicolor', 1, 0)
+    y_virginica = np.where(y == 'Virginica', 1, 0)
+    sets = [y_setosa, y_versicolor, y_virginica]
 
-    clf = create_MLP()
+    for set in sets:
+        # split data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, set, test_size=0.2, random_state=1)
 
-    fit(clf, X_train, y_train, True if(plotting==0 or plotting==2)else False)
+        # create and train model
+        clf = create_MLP()
 
-    if (plotting == 1 or plotting == 2):
-        plot_results(clf,X_test, y_test)
+        fit(clf, X_train, y_train, plot=live_plotting, isIris= True)
+
+        if (plotting_results):
+            plot_results(clf,X_test, y_test)
+
+while(True):
+    plotting = int(input("0. Live Plot\n1. Plot Results\n2. Both\n") or 2)
+    live_plotting = plotting==0 or plotting==2
+    plotting_results = plotting == 1 or plotting == 2
+    live_plotting_3d, plotting_results_3d = False, False
+    
+    file = input("Δώσε input file(a, b, c, d, ii_a, ii_b, iris): ") or 'a'
+    if (file == "iris"):
+        iris(plotting_results, live_plotting)
+    else:
+        input_file = 'data_package_%s.csv' %file
+        if (file.__contains__("ii_")):
+            live_plotting_3d, plotting_results_3d = live_plotting, plotting_results
+            live_plotting, plotting_results = False, False
+        df = pd.read_csv(input_file, header=0)
+        df = df._get_numeric_data()
+        # targets
+        targets_file = 'data_package_values_%s.csv' %file
+        targets_df = pd.read_csv(targets_file, header=0)
+        targets_df = targets_df._get_numeric_data()
+
+        # X: values, y: targets
+        X = df.values
+        y = targets_df.values
+
+        # split data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+        clf = create_MLP()
+
+        fit(clf, X_train, y_train, plot=live_plotting, plot_3d=live_plotting_3d)
+
+        if (plotting_results):
+            plot_results(clf,X_test, y_test)
+        if (plotting_results_3d):
+            plot_results_3d(clf,X_test, y_test)
 
     s = int(input('Δώσε 1 για να τρέξεις ξανά τον αλγόριθμο ή 0 για τερματισμό: ') or 0)
     if (s!=1): break

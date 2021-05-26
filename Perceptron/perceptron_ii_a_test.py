@@ -32,8 +32,9 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=123)
 
 # create and train model
-p = Perceptron(learning_rate=0.01, n_iters=1000)
-p.fit(X_train, y_train, True)
+
+p = Perceptron(learning_rate=0.01, n_iters=100)
+p.fit(X_train, y_train, plot_3d=True)
 predictions = p.predict(X_test)
 
 print("Perceptron classification accuracy",
