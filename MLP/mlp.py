@@ -16,7 +16,7 @@ def create_MLP():
     if (int(input("run with default values?(1,yes/0,no): ") or 1) == 0):
         solver = input('Δώσε solver (adam, sgd, lbfgs): ') or 'adam'
         hidden_layer_size = (int(input("Δώσε αριθμό κρυφών νευρώνων: ") or 100),)
-        activation = 'logistic' if (int(input('Δώσε 0 για ‘tanh’ (δηλ. σιγμοειδή -1/1) ή 1 για ‘logistic’ (δηλ. σιγμοειδή 0/1): ') or 0) == 1) else 'tanh'
+        activation = input('Δώσε activation function (identity, logistic, tanh, relu): ') or 'logistic'
         max_iter = int(input('Δώσε max_iter: ') or 100)
         update_every = int(input('Ανανέωση Live Plot ανά πόσες εποχές? ') or 1) 
         learning_rate = input("Δώσε learning_rate (constant, invscaling, adaptive): ") or 'constant'
@@ -40,7 +40,7 @@ def create_MLP():
 
     return clf
 
-def live_plot(ax, X, y, y_pred, clf, mse_ar, isIris=False):
+def live_plot(ax, X, y, y_pred, clf, mse_ar, isIris=False, isHousing=False):
     # clear graphs
     ax[0][0].clear()
     ax[0][1].clear()
@@ -56,6 +56,8 @@ def live_plot(ax, X, y, y_pred, clf, mse_ar, isIris=False):
             filler_feature_values={2: value},
             filler_feature_ranges={2: width},
             legend=2, ax=ax[0][1])
+    elif (isHousing):
+        print("housing")
     else:
         plot_decision_regions(X, y=y_pred.flatten().astype(np.integer), clf=clf, legend=2, ax=ax[0][1])
 
@@ -79,7 +81,6 @@ def live_plot_3d(ax, X, y, y_pred, clf):
         ax[1].scatter(X[:, 0], X[:, 1],X[:, 2], marker='x', c=y_pred)
         ax[2].scatter(range(len(y_pred)), y_pred,marker='x', c=y)
 
-        epoch = clf.n_iter_-1
         w = clf.coefs_[0]
         w1 = w[0]
         w2 = w[1]
@@ -122,7 +123,7 @@ def plot_results(clf, X_test, y_test):
 def plot_results_3d(clf, X_test, y_test):
    plot_results(clf, X_test, y_test)
 
-def fit(clf,X_train, y_train, plot=False, plot_3d=False, isIris=True):
+def fit(clf,X_train, y_train, plot=False, plot_3d=False, isIris=False, isHousing=False):
     if(plot):
         fig, axes = plt.subplots(2,2)
     if(plot_3d):
@@ -133,10 +134,10 @@ def fit(clf,X_train, y_train, plot=False, plot_3d=False, isIris=True):
         ax_3d_2= fig_3d.add_subplot(gs[0,2])
         ax3d=[ax_3d_0,ax_3d_1,ax_3d_2]
     mse_ar = np.zeros(max_iter)
-    if (clf.solver =='sgd'): # partial_fit doesn't support sgd solver
+    if (clf.solver =='sgd' or clf.solver == 'lbfgs'): # partial_fit doesn't support sgd and lbfgs solvers
         clf.fit(X_train,y_train)
         if(plot):
-            live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris)
+            live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris, isHousing=isHousing)
         if(plot_3d):
             live_plot_3d(ax3d, X_train, y_train, clf.predict(X_train), clf)
     else:
@@ -145,10 +146,10 @@ def fit(clf,X_train, y_train, plot=False, plot_3d=False, isIris=True):
             mse = 1/y_train.shape[0] * pow(np.sum(np.subtract(y_train, clf.predict(X_train))), 2)
             mse_ar[epoch] = mse
             # 3. Monitor progress
-            if(epoch%update_every==0): #update every X epochs
+            if(epoch%update_every==0 or epoch == max_iter): #update every X epochs
                 print("Epoch %d" %epoch, "Accuracy %f" %clf.score(X_train, y_train))
                 if(plot):
-                    live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris)
+                    live_plot(axes,X_train,y_train,clf.predict(X_train),clf,mse_ar, isIris=isIris, isHousing=isHousing)
                     fig.suptitle('Epoch %d' % epoch)
                 if(plot_3d):
                     live_plot_3d(ax3d, X_train, y_train, clf.predict(X_train), clf)
@@ -183,15 +184,71 @@ def iris(plotting_results, live_plotting):
         if (plotting_results):
             plot_results(clf,X_test, y_test)
 
+
+def housing(plotting_results, live_plotting):
+    from sklearn.preprocessing import MinMaxScaler
+    # input_file = 'housing.data'
+    train_df = pd.read_csv('https://firebasestorage.googleapis.com/v0/b/bible-project-2365c.appspot.com/o/train.csv?alt=media&token=9c5d17c2-0589-43ea-b992-e7c2ad02d714', index_col='ID')
+    train_df.head()
+    test_df = pd.read_csv('https://firebasestorage.googleapis.com/v0/b/bible-project-2365c.appspot.com/o/test.csv?alt=media&token=99688b27-9fdb-4ac3-93b8-fa0e0f4d7540', index_col='ID')
+    test_df.head()
+
+    predictors = ['crim', 'zn', 'indus', 'chas', 'nox', 'rm', 'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'lstat']
+    target = 'medv'
+    
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    # Scale both the training inputs and outputs
+    scaled_train = scaler.fit_transform(train_df)
+    print("Note: median values were scaled by multiplying by {:.10f} and adding {:.6f}".format(scaler.scale_[13], scaler.min_[13]))
+    multiplied_by = scaler.scale_[13]
+    added = scaler.min_[13]
+    scaled_train_df = pd.DataFrame(scaled_train, columns=train_df.columns.values)
+
+    X_train = scaled_train_df.drop(target, axis=1).values
+    y_train = scaled_train_df[[target]].values
+
+    # from sklearn.preprocessing import LabelBinarizer
+    # y_dense = LabelBinarizer().fit_transform(y_train.astype(str))
+    # print(y_dense)
+
+    # y_train = y_dense
+
+    clf = create_MLP()
+
+    fit(clf, X_train, y_train, plot=live_plotting, isHousing=True)
+
+    test_error_rate = clf.score(X= X_train, y=y_train)
+    print("The mean squared error (MSE) for the test data set is: {}".format(test_error_rate))
+
+    prediction = clf.predict(X_train)
+    y_0 = prediction[0]
+    print('Prediction with scaling - {}',format(y_0))
+    y_0 -= added
+    y_0 /= multiplied_by
+    print("Housing Price Prediction  - ${}".format(y_0))
+
+    Y_0 = y_train[0][0]
+    print('Ground truth with scaling - {}'.format(Y_0))
+    Y_0 -= added
+    Y_0 /= multiplied_by
+
+    print('Ground Truth Price - ${}'.format(Y_0))
+
+
+    if (plotting_results):
+        plot_results(clf,X_test, y_test)
+
 while(True):
     plotting = int(input("0. Live Plot\n1. Plot Results\n2. Both\n") or 2)
     live_plotting = plotting==0 or plotting==2
     plotting_results = plotting == 1 or plotting == 2
     live_plotting_3d, plotting_results_3d = False, False
     
-    file = input("Δώσε input file(a, b, c, d, ii_a, ii_b, iris): ") or 'a'
+    file = input("Δώσε input file(a, b, c, d, ii_a, ii_b, iris, housing): ") or 'a'
     if (file == "iris"):
         iris(plotting_results, live_plotting)
+    elif(file == "housing"):
+        housing(live_plotting=live_plotting, plotting_results=plotting_results)
     else:
         input_file = 'data_package_%s.csv' %file
         if (file.__contains__("ii_")):
