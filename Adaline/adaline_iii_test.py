@@ -16,7 +16,7 @@ def adaline_test_i_b():
 
     # X: values, y: targets
     # extract features
-    X = df.iloc[:, 0:3].values
+    X = df.iloc[:, 0:4].values
     # extract the label column
     y = df.iloc[:, 4].values
     # normalize the data attributes

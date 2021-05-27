@@ -205,7 +205,7 @@ def iris(plotting_results, live_plotting):
 
     # X: values, y: targets
     # extract features
-    X = df.iloc[:, 0:3].values
+    X = df.iloc[:, 0:4].values
     # extract the label column
     y = df.iloc[:, 4].values
 
@@ -373,7 +373,7 @@ while(True):
     live_plotting_3d, plotting_results_3d = False, False
 
     file = input(
-        "Δώσε input file(a, b, c, d, ii_a, ii_b, iris, housing, bitmap): ") or 'a'
+        "Δώσε input file (a, b, c, d, ii_a, ii_b, iris, housing, bitmap): ") or 'a'
     if (file == "iris"):
         iris(plotting_results, live_plotting)
     elif(file == "housing"):
