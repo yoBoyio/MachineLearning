@@ -29,7 +29,7 @@ def least_square_implementation(xtrain, xtest, ttrain, ttest):
     # # fold_results(fold_guesses, fold_t)
 
 
-def show_guessing(self, ttrain, guesses):
+def show_guessing(ttrain, guesses):
     # Init 2 subplots
     fig, axs = plt.subplots(2)
     # Add title
