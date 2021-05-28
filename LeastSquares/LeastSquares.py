@@ -15,13 +15,15 @@ class LeastSquares:
         t = np.asarray(ttrain)
         nx = np.asarray(x)
         # t = np.transpose(t)
-        weights = np.zeros(xtrain.shape)
-        print(weights)
-        print(np.transpose(nx))
-        return weights.dot(np.transpose(nx))
+        weights = np.ones(xtrain.shape) # allios epistrefei mono 0 otan kaleis to .dot 
+        # print(weights)
+        # print(np.transpose(nx))
+        return weights.dot(nx)
 
     # Normalize value
     def normalize(self, val):
+        #! edw bgazei poli mikra noumera, den 3erw ti paizei
+        print(val)
         if val < 0:
             return -1.0
         else:
@@ -38,5 +40,5 @@ class LeastSquares:
     def get_predictions(self, xtest, weights):
         predictions = []
         for index in range(len(xtest)):
-            predictions.append(self.guess(xtest[index], weights))
+            predictions.append(self.guess(xtest[index], weights[index])) #ayto ypotheto soy 3efige, alla den ebgaze poly nohma xwris to index sto weights
         return predictions
