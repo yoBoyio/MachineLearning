@@ -26,7 +26,7 @@ def plot(ax, neurons, X, results, y, is3d, isIris):
     plt.pause(0.00001)
 
 
-def iris():
+def load_iris():
     # import and ready input file
     input_file = "iris.csv"
     df = pd.read_csv(input_file, header=None)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     isIris = file.__contains__("iris")
     if (isIris):
         is3d = int(input("Δώσε 1 για εμφάνιση αποτελεσμάτων σε 3D: ") or 0) == 1
-        X, y = iris()
+        X, y = load_iris()
     else:
         input_file = 'data_package_%s.csv' % file
         df = pd.read_csv(input_file, header=0)
