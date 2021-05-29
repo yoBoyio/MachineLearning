@@ -4,26 +4,8 @@ from sklearn.model_selection import train_test_split
 
 
 class Adaline:
-    def transmute_targets(self, targets_train, targets_test):
-        index = 0
-        for target in enumerate(targets_train):
-            if target[1] == 0:
-                # print(target[1])
-                targets_train[index] = -1
-            index += 1
-        index = 0
-        for target in enumerate(targets_test):
-            if target[1] == 0:
-                print(target[1])
-                targets_test[index] = -1
-            index += 1
-        return targets_train, targets_test
-
     def sign_function(self, weighted_sum):
-        if weighted_sum < 0:
-            return -1
-        else:
-            return 1
+        return weighted_sum
 
     def output(self, weights, pattern):
         return np.dot(weights, pattern)
