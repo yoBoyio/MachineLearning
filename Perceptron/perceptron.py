@@ -48,13 +48,6 @@ class Perceptron:
                 self.weights += update * xi
                 self.bias += update
                 y_pred[index] = y_predicted
-            if(epoch % 10 == 0):  # update every 10 epochs
-                if plot:
-                    self.live_plot(axes, X, y, self.weights,
-                                   self.bias, y_pred)
-                if plot_single:
-                    self.live_plot_single(
-                        ax, targets=y, predictions=y_pred)
             if(epoch % 10 == 0 or epoch == self.n_iters-1):  # update every 10 epochs
                 if plot:
                     fig.suptitle("Epoch %d" % epoch)
