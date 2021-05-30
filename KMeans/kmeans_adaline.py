@@ -38,9 +38,6 @@ def main():
     patterns = np.array(patterns)
     targets = np.array(targets)
 
-    print(patterns)
-    print(targets)
-
     patterns = add_biases(patterns)
     patterns_train, patterns_test, targets_train, targets_test = train_test_split(
         patterns, targets, test_size=0.2, random_state=123)

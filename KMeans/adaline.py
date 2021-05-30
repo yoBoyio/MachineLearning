@@ -34,8 +34,6 @@ class Adaline:
 
             for i, pattern in enumerate(patterns):
                 current_output = self.output(weights, pattern)
-                # print(current_output)
-                # print(targets[i])
                 y_pred[i] = current_output
                 weights = self.adjust_weights(
                     weights, targets[i], pattern, learning_rate, current_output)
