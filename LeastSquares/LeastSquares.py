@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class LeastSquares():
@@ -42,6 +41,16 @@ class LeastSquares():
             return -1
         else:
             return 1
+
+    def plot_accuracy(self, targets, guesses):
+        fig, axs = plt.subplots(2)
+        fig.suptitle('Επιτυχείς/Ανεπιτυχείς κατανομές')
+        for index in range(len(guesses)):
+            axs[0].scatter(index, 'Chosen class' if targets[index] ==
+                           1 else 'Other class', marker='o', color='blue', label='correct')
+            axs[1].scatter(index, 'Chosen class' if guesses[index] ==
+                           1 else 'Other class', marker='o', color='red', label='guesses')
+        plt.show()
 
     def get_accuracy(self, guesses, targets):
         correct_answers = 0
