@@ -7,7 +7,7 @@ class SOM():
     The 2-D, rectangular grid self-organizing map class using Numpy.
     """
 
-    def __init__(self, m=3, n=3, dim=3, lr=1, sigma=1, max_iter=3000):
+    def __init__(self, m=3, n=3, dim=3, lr=1, sigma=1, max_iter=5000):
         """
         Parameters
         ----------
@@ -105,7 +105,7 @@ class SOM():
         # Compute sum of squared distance (just euclidean distance) from x to bmu
         return np.sum(np.square(x - bmu))
 
-    def fit(self, X, y, epochs=1, shuffle=True):
+    def fit(self, X, y, iris=False, plot_single=False, plot_3d=False, epochs=1, shuffle=True):
         """
         Take data (a tensor of type float64) as input and fit the SOM to that
         data for the specified number of epochs.
@@ -129,10 +129,17 @@ class SOM():
         n_samples = X.shape[0]
         total_iterations = np.minimum(epochs * n_samples, self.max_iter)
 
-        fig, axes = plt.subplots(1, 3)
+        if plot_single:
+            fig, axes = plt.subplots(1, 3)
+        if plot_3d:
+            fig_3d = plt.figure(figsize=(8, 4))
+            gs = fig_3d.add_gridspec(1, 2)
+            ax_3d_0 = fig_3d.add_subplot(gs[0, 0], projection='3d')
+            ax_3d_1 = fig_3d.add_subplot(gs[0, 1], projection='3d')
+            ax3d = [ax_3d_0, ax_3d_1]
 
         for epoch in range(epochs):
-            y_pred = np.zeros(X.shape)
+            r_weights = np.zeros(self.weights.shape)
             # Break if past max number of iterations
             if global_iter_counter > self.max_iter:
                 break
@@ -155,10 +162,13 @@ class SOM():
                 global_iter_counter += 1
                 self.lr = (1 - (global_iter_counter /
                                 total_iterations)) * self.initial_lr
-                # y_pred[idx] = self.weights
 
-            # print(self.weights)
-            # self.live_plot(axes, X, y, y_pred, fig, epoch, )
+            print(epoch)
+            # r_weights[idx] = self.weights
+            if plot_single:
+                self.live_plot(axes, X, y, self.weights, fig, epoch, iris)
+            if plot_3d:
+                self.live_plot_3d(ax3d, X, y, self.weights)
 
         # Compute inertia
         inertia = np.sum(
@@ -170,27 +180,33 @@ class SOM():
 
         # Set trained flag
         self._trained = True
-
         return
 
-    def live_plot(self, axes, X, y, w, fig, epoch):
+    def live_plot(self, axes, X, y, w, fig, epoch, iris):
         fig.suptitle('Epoch %d' % epoch)
         axes[0].clear()  # clear the line
         axes[1].clear()  # clear the line
-        axes[2].clear()  # clear the line
         axes[0].scatter(X[:, 0], X[:, 1], marker='o', c=y)
+        axes[1].scatter(X[:, 0], X[:, 1], marker='o', c=y)
         axes[1].scatter(w[:, 0], w[:, 1], marker='x', c='b')
-        # if (d3):
-        #     axes[0].scatter(X[:, 0], X[:, 2], marker='o', c=y)
-        #     axes[1].scatter(X[:, 0], X[:, 2], marker='x', c=y_pred)
-
-        # axes[2].scatter(range(len(y_pred)), y_pred, marker='x', c=y_pred)
-        # axes[2].set_xlabel('x')
+        if (iris):
+            axes[0].scatter(X[:, 0], X[:, 2], marker='o', c=y)
+            axes[1].scatter(w[:, 0], w[:, 2], marker='x', c=y)
 
         axes[0].set_xlabel("x")
         axes[0].set_ylabel("y ")
         axes[1].set_xlabel("x")
         plt.pause(0.001)
+
+    def live_plot_3d(self, ax, X, y, w):
+        ax[0].clear()
+        ax[1].clear()
+
+        ax[0].scatter(X[:, 0], X[:, 1], X[:, 2], marker='x', c=y)
+        ax[1].scatter(X[:, 0], X[:, 1], X[:, 2], marker='x', c=y)
+        ax[1].scatter(w[:, 0], w[:, 1], w[:, 2], marker='x', c='r')
+
+        plt.pause(0.0001)
 
     def predict(self, X):
         """

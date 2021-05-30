@@ -1,9 +1,18 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-class LeastSquares:
+class LeastSquares():
 
-    # Get correct weight
+    def transmute_targets(self, targets_train, targets_test):
+        for index, target in enumerate(targets_train):
+            if target == 0:
+                targets_train[index] = -1
+        for index, target in enumerate(targets_test):
+            if target == 0:
+                targets_test[index] = -1
+        return targets_train, targets_test
+
     def get_weights(self, xtrain, ttrain):
         xt = []
         for item in xtrain:
@@ -14,31 +23,29 @@ class LeastSquares:
         x = np.linalg.pinv(xt)
         t = np.asarray(ttrain)
         nx = np.asarray(x)
-        # t = np.transpose(t)
-        weights = np.ones(xtrain.shape) # allios epistrefei mono 0 otan kaleis to .dot 
-        # print(weights)
-        # print(np.transpose(nx))
-        return weights.dot(nx)
+        return t.dot(np.transpose(nx))
 
-    # Normalize value
-    def normalize(self, val):
-        #! edw bgazei poli mikra noumera, den 3erw ti paizei
-        print(val)
-        if val < 0:
-            return -1.0
+    def test(self, weights, patterns_test, targets_test):
+        guesses = np.zeros(len(targets_test))
+        for i in range(len(patterns_test)):
+            guesses[i] = self.guess(weights, patterns_test[i])
+        return guesses
+
+    def guess(self, weights, pattern):
+        weighted_sum = 0
+        for i in range(len(pattern)):
+            weighted_sum += weights[i] * pattern[i]
+        return self.sign_function(weighted_sum)
+
+    def sign_function(self, weighted_sum):
+        if weighted_sum < 0:
+            return -1
         else:
-            return 1.0
+            return 1
 
-    # Find guess and return normalized value
-    def guess(self, xtrain, weights):
-        weighted_sum = 0.0
-        for i in range(len(xtrain)):
-            weighted_sum += xtrain[i]*weights[i]
-        return self.normalize(weighted_sum)
-
-    # Get predictions
-    def get_predictions(self, xtest, weights):
-        predictions = []
-        for index in range(len(xtest)):
-            predictions.append(self.guess(xtest[index], weights[index])) #ayto ypotheto soy 3efige, alla den ebgaze poly nohma xwris to index sto weights
-        return predictions
+    def get_accuracy(self, guesses, targets):
+        correct_answers = 0
+        for i in range(len(guesses)):
+            if guesses[i] == targets[i]:
+                correct_answers += 1
+        return int((correct_answers / len(targets)) * 100)
