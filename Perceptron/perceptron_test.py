@@ -183,38 +183,38 @@ def main():
         if (file.__contains__("ii_")):
             live_plotting_3d, plotting_results_3d = live_plotting, plotting_results
             live_plotting, plotting_results = False, False
-            df = pd.read_csv(input_file, header=0)
-            df = df._get_numeric_data()
-            # targets
-            targets_file = 'data_package_values_%s.csv' % file
-            targets_df = pd.read_csv(targets_file, header=0)
-            targets_df = targets_df._get_numeric_data()
+        df = pd.read_csv(input_file, header=0)
+        df = df._get_numeric_data()
+        # targets
+        targets_file = 'data_package_values_%s.csv' % file
+        targets_df = pd.read_csv(targets_file, header=0)
+        targets_df = targets_df._get_numeric_data()
 
-            # x: values, y: targets
-            X = df.values
-            y = targets_df.values
+        # x: values, y: targets
+        X = df.values
+        y = targets_df.values
 
-            # split data into train and test sets
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.2, random_state=123)
+        # split data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=123)
 
-            # create and train model
-            p = Perceptron(learning_rate=0.01, n_iters=100)
-            p.fit(X_train, y_train, plot=live_plotting, plot_3d=live_plotting_3d)
-            predictions = p.predict(X_test)
+        # create and train model
+        p = Perceptron(learning_rate=0.01, n_iters=100)
+        p.fit(X_train, y_train, plot=live_plotting, plot_3d=live_plotting_3d)
+        predictions = p.predict(X_test)
 
-            if(plotting_results):
-                fig = plt.figure()
-                ax = fig.add_subplot(1, 1, 1)
-                # mple teleies: pragmatikoi stoxoi (y_test)
-                plt.scatter(range(len(y_test)), y_test, marker='o', color='b')
-                plt.scatter(range(len(predictions)), predictions, marker='.',
-                            color='r')  # kokkinoi kykloi: exwdos (predictions)
-                plt.xlabel("protypo")
-                plt.ylabel("exodos (r) / stoxos (b)")
-            if(plotting_results_3d):
-                plot_results_3d(p,X_test,y_test,predictions)
-            print("Perceptron classification accuracy", accuracy(y_test, predictions), "%")
+        if(plotting_results):
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            # mple teleies: pragmatikoi stoxoi (y_test)
+            plt.scatter(range(len(y_test)), y_test, marker='o', color='b')
+            plt.scatter(range(len(predictions)), predictions, marker='.',
+                        color='r')  # kokkinoi kykloi: exwdos (predictions)
+            plt.xlabel("protypo")
+            plt.ylabel("exodos (r) / stoxos (b)")
+        if(plotting_results_3d):
+            plot_results_3d(p,X_test,y_test,predictions)
+        print("Perceptron classification accuracy", accuracy(y_test, predictions), "%")
     plt.show()
 
 if( __name__ == "__main__"):
