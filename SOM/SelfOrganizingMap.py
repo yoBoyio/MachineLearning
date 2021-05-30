@@ -202,8 +202,8 @@ class SOM():
         ax[0].clear()
         ax[1].clear()
 
-        ax[0].scatter(X[:, 0], X[:, 1], X[:, 2], marker='x', c=y)
-        ax[1].scatter(X[:, 0], X[:, 1], X[:, 2], marker='x', c=y)
+        ax[0].scatter(X[:, 0], X[:, 1], X[:, 2], marker='o', c=y)
+        ax[1].scatter(X[:, 0], X[:, 1], X[:, 2], marker='o', c=y)
         ax[1].scatter(w[:, 0], w[:, 1], w[:, 2], marker='x', c='r')
 
         plt.pause(0.0001)
