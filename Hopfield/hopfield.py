@@ -1,6 +1,7 @@
 from hopfieldnetwork import HopfieldNetwork
 import pandas as pd
 import numpy as np
+np.random.seed(2347545)
 from matplotlib import pyplot as plt
 
 

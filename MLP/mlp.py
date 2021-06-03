@@ -57,12 +57,13 @@ def live_plot(ax, X, y, y_pred, clf, mse_ar, isIris=False, isHousing=False):
     ax[0][0].scatter(X[:, 0], X[:, 1], marker='x', c=y)
     # graph 2
     if (isIris):
-        value = 1.5
-        width = 0.75
-        plot_decision_regions(X, y=y_pred.flatten().astype(np.integer), clf=clf,
-                              filler_feature_values={2: value},
-                              filler_feature_ranges={2: width},
-                              legend=2, ax=ax[0][1])
+        # value = 1.5
+        # width = 0.75
+        # plot_decision_regions(X, y=y_pred.flatten().astype(np.integer), clf=clf,
+        #                       filler_feature_values={2: value},
+        #                       filler_feature_ranges={2: width},
+        #                       legend=2, ax=ax[0][1])
+        ax[0][1].scatter(X[:, 0], X[:, 1], marker='x', c=y_pred)
     elif (isHousing):
         print("housing")
     else:

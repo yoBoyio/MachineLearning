@@ -54,6 +54,8 @@ for num_components in num_components_ar:
     ax.plot(num_components_ar[:i+1], acc_train[:i+1], c='b', label='train')
     ax.plot(num_components_ar[:i+1], acc_test[:i+1], 'ro')
     ax.plot(num_components_ar[:i+1], acc_test[:i+1], c='r', label='test')
+    ax.set_xlabel("Number of Components")
+    ax.set_ylabel("Accuracy")
     i= i + 1
     plt.legend()
     plt.pause(0.0001)
