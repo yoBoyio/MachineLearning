@@ -34,12 +34,19 @@ gamma = [0.0001, 0.001, 0.01, 0.1]
 C = [1, 10, 100, 1000]
 
 # start_Of_folds
-fig, subplt = plt.subplots(4, 3)
-fig, liveplt = plt.subplots()
+fig, subplt = plt.subplots(3, 3)
+
+default = (int(input("run with default values?(1,yes/0,no): ") or 1) == 0)
+kernel = input(
+    'Δώσε kernel (linear, poly, rbf, sigmoid): ') or 'rbf'
+gamma = float(
+    input('Δώσε gamma 1, 0.1, 0.01, 0.001, 0.0001 : ') or 0.1)
+C = int(input('Δώσε C 1, 10, 100, 1000, 10000, 100000: ') or 1)
+
 
 n_folds = 9
 for folds in range(0, n_folds):
-    liveplt.clear()
+    # liveplt.clear()
     xtrain, xtest, ttrain, ttest = train_test_split(x, t, test_size=0.25)
 
     numberOfTrain = len(xtrain)
@@ -47,38 +54,30 @@ for folds in range(0, n_folds):
 
     xtrain = np.array(xtrain, dtype=float)
     xtest = np.array(xtest, dtype=float)
-    if (int(input("run with default values?(1,yes/0,no): ") or 1) == 0):
-        kernel = input(
-            'Δώσε kernel (linear, poly, rbf, sigmoid): ') or 'rbf'
-        gamma = float(
-            input('Δώσε gamma 1, 0.1, 0.01, 0.001, 0.0001 : ') or 0.1)
-        C = int(input('Δώσε C 1, 10, 100, 1000, 10000, 100000: ') or 1)
-
-        model = SVR(C=C, kernel=kernel, gamma=gamma)
-    else:
+    if(default):
         model = SVR()
+    else:
+        model = SVR(C=C, kernel=kernel, gamma=gamma)
 
     model.fit(xtrain, ttrain)
     predict = model.predict(xtest)
 
-    mse += regrevaluate(ttest, predict, 'mse')
-    mae += regrevaluate(ttest, predict, 'msa')
-    print(xtest)
-    if (model.kernel == "linear"):
+    # mse += regrevaluate(ttest, predict, 'mse')
+    # mae += regrevaluate(ttest, predict, 'msa')
+    # print(xtest)
+    # if (model.kernel == "linear"):
 
-        xlim = liveplt.get_xlim()
-        w = model.coef_[0]
-        a = -w[0]/w[1]
-        xx = np.linspace(xlim[0], xlim[1])
-        yy = a*xx-(model.intercept_[0]/w[1])
-        liveplt.scatter(xtest[:, 0], xtest[:, 1], marker='x', c=predict)
+    #     xlim = liveplt.get_xlim()
+    #     w = model.coef_[0]
+    #     a = -w[0]/w[1]
+    #     xx = np.linspace(xlim[0], xlim[1])
+    #     yy = a*xx-(model.intercept_[0]/w[1])
+    #     liveplt.scatter(xtest[:, 0], xtest[:, 1], marker='x', c=predict)
 
-        liveplt.plot(xx, yy)
+    #     liveplt.plot(xx, yy)
     # plots
     i = int((folds)/3)
-    print(i)
     j = int((folds) % 3)
-    print(j)
     subplt[i, j].plot(ttest, "ro")
     subplt[i, j].plot(predict, "b.")
 
