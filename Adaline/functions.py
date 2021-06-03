@@ -54,6 +54,7 @@ def adaline_implementation(targets_train, targets_test, patterns_train,
     weights = a.train(max_epochs, patterns_train,
                       atargets_train, learning_rate, min_mse, plot, d3)
     # if plot == False:
+    print(weights)
     guesses = a.test(weights, patterns_test, atargets_test)
     a.plot_accuracy(atargets_test, guesses)
     # a.cross_validation_test(patterns_train, atargets_train,

@@ -6,55 +6,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from mlxtend.plotting import plot_decision_regions
 
-# # Load the IRIS dataset from URL
-# url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-# data = pd.read_csv(url, header=None)
-# # The first four columns are the x patterns
-# x = data[[0, 1, 2, 3]].values
-# # The last column are the labels
-# labels = data[4].values
-# # Transform labels to integeres 0, 1, 2
-# map_dict = {'Iris-setosa': 0,
-#             'Iris-versicolor': 1,
-#             'Iris-virginica': 2}
-# t = np.array([map_dict[lbl] for lbl in labels])
-
-
-# """
-# Train the SVM model
-# Use RBF kernel for various values `C`, `gamma`
-# """
-# acc_train = np.zeros([5, 6])
-# acc_test = np.zeros([5, 6])
-# for i, gamma in enumerate([1, 0.1, 0.01, 0.001, 0.0001]):
-#     plt.figure(num=i+1, figsize=(10, 8)).svc()
-#     for j, C in enumerate([1, 10, 100, 1000, 10000, 100000]):
-#         for fold in range(50):
-#             # Split randomly the dataset into train and test sets
-#             x_train, x_test, t_train, t_test = train_test_split(
-#                 x, t, test_size=0.3)
-#             # Build SVM model classfier
-#             model = SVC(C=C, kernel='rbf', gamma=gamma)
-#             # Train model
-#             model.fit(x_train, t_train)
-#             # Predict training data
-#             y_train = model.predict(x_train)
-#             acc_train[i, j] += np.sum(y_train == t_train)/t_train.shape[0]
-#             # Predict test data
-#             y_test = model.predict(x_test)
-#             acc_test[i, j] += np.sum(y_test == t_test)/t_test.shape[0]
-#         acc_train[i, j] = acc_train[i, j]/50
-#         acc_test[i, j] = acc_test[i, j]/50
-
-#     plt.semilogx([1, 10, 100, 1000, 10000, 100000], acc_train[i, :], 'b')
-#     plt.semilogx([1, 10, 100, 1000, 10000, 100000], acc_test[i, :], 'r')
-#     plt.ylim(0.9)
-#     plt.grid(b=True)
-#     plt.xlabel('C', fontsize=16)
-#     plt.title('$\gamma$={}'.format(gamma), fontsize=16)
-#     plt.legend(['acc-train', 'acc-test'], fontsize=16)
-#     plt.show()
-
 
 def create_SVC():
 

@@ -21,7 +21,7 @@ def adaline_test_i_b():
 
     predictors = ['crim', 'zn', 'indus', 'chas', 'nox', 'rm',
                   'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'lstat']
-    target = 'dis'
+    target = 'zn'
 
     scaler = MinMaxScaler(feature_range=(0, 1))
     # Scale both the training inputs and outputs
